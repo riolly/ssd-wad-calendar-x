@@ -1,4 +1,4 @@
-export const months = [
+export const MONTHS = [
   "January",
   "February",
   "March",
@@ -14,10 +14,10 @@ export const months = [
 ];
 
 export function getMonthString(date: Date) {
-  return months[date.getMonth()];
+  return MONTHS[date.getMonth()];
 }
 
-export const days = [
+export const DAYS = [
   "Sunday",
   "Monday",
   "Tuesday",

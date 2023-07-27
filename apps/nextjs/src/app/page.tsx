@@ -1,12 +1,6 @@
 import { PlusIcon } from "lucide-react";
 
-import {
-  days,
-  getDateOrdinal,
-  getMonthString,
-  getNumberOfDays,
-} from "~/lib/date";
-import { cn } from "~/lib/utils";
+import { DAYS, getMonthString, getNumberOfDays } from "~/lib/date";
 
 export default function HomePage() {
   const todayDate = new Date();
@@ -41,7 +35,7 @@ export default function HomePage() {
         </h1>
 
         <div className="grid grid-cols-7 overflow-clip rounded-t-xl">
-          {days.map((day) => (
+          {DAYS.map((day) => (
             <DayHeading key={day} day={day} />
           ))}
           {daysObj.map((item, i) => (
