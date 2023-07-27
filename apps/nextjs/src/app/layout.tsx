@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 export default function Layout(props: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body className={["font-sans", fontSans.variable].join(" ")}>
           <TRPCReactProvider>{props.children}</TRPCReactProvider>
         </body>
