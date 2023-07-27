@@ -11,20 +11,39 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { getDateOrdinal, getDayString } from "~/lib/date";
 
 export function CreateEventDialog({
   open,
   setOpen,
+  selectedDate,
+  selectedDay,
 }: {
   open: boolean;
+  selectedDay: number | null;
+  selectedDate: Date | null;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add schedule/ event</DialogTitle>
-          <DialogDescription>You can also invite peoples</DialogDescription>
+          <DialogTitle className="font-normal">
+            Add schedule for
+            {selectedDate && selectedDay && (
+              <span className="text-blue-200">
+                &nbsp;
+                {getDayString(selectedDate)}
+                ,&nbsp;{selectedDay}
+                <sup className="text-sm">{getDateOrdinal(selectedDay)}</sup>
+                &nbsp;
+                {selectedDate.getFullYear()}
+              </span>
+            )}
+          </DialogTitle>
+          <DialogDescription>
+            You can also invite peoples on your schedule
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">

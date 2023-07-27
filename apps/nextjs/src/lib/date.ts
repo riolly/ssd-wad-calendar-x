@@ -27,6 +27,10 @@ export const DAYS = [
   "Saturday",
 ];
 
+export function getDayString(date: Date) {
+  return DAYS[date.getDay()];
+}
+
 export const getDateOrdinal = (d: number) => {
   if (d > 3 && d < 21) return "th";
   switch (d % 10) {
