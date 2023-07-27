@@ -17,6 +17,9 @@ export function CreatePostForm() {
       setContent("");
       await context.post.all.invalidate();
     },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 
   return (
@@ -28,9 +31,6 @@ export function CreatePostForm() {
           title,
           content,
         });
-        setTitle("");
-        setContent("");
-        await context.post.all.invalidate();
       }}
     >
       <input
