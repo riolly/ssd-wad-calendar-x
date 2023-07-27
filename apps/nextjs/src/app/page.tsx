@@ -1,34 +1,12 @@
-function getMonthString(date: Date) {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  return months[date.getMonth()];
-}
-const days = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
 
-function getNumberOfDays(date: Date) {
-  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return days[date.getMonth()];
-}
+
+import {
+  days,
+  getDateOrdinal,
+  getMonthString,
+  getNumberOfDays,
+} from "~/lib/date";
+import { cn } from "~/lib/utils";
 
 export default function HomePage() {
   const todayDate = new Date();
