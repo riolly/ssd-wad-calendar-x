@@ -1,5 +1,12 @@
 import * as React from "react";
+import { useFormContext } from "react-hook-form";
 
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "~/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -9,28 +16,43 @@ import {
 } from "~/components/ui/select";
 
 export function TimeSelect({
+  name,
+  label,
   className,
   placeholder,
-  defaultValue,
   opts,
 }: {
+  name: string;
+  label: string;
   className?: string;
   placeholder?: string;
-  defaultValue?: string;
   opts: string[];
 }) {
+  const { control } = useFormContext();
+
   return (
-    <Select defaultValue={defaultValue}>
-      <SelectTrigger className={className}>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent className="min-w-fit">
-        {opts.map((opt, i) => (
-          <SelectItem key={`${i}-${opt}`} value={opt}>
-            {opt}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className={className}>
+          <FormLabel className="sr-only">{label}</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent className="min-w-fit">
+              {opts.map((opt, i) => (
+                <SelectItem key={`${i}-${opt}`} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    />
   );
 }
