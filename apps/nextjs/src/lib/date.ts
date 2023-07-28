@@ -34,8 +34,8 @@ export function getDayString(date: Date) {
   return DAYS[date.getDay()]!;
 }
 
-export const getDateOrdinal = (date: Date): Ordinal => {
-  const d = date.getDay();
+export const getDateOrdinal = (date: Date | number): Ordinal => {
+  const d = typeof date === "number" ? date : date.getDay();
   if (d > 3 && d < 21) return "th";
   switch (d % 10) {
     case 1:
@@ -49,9 +49,13 @@ export const getDateOrdinal = (date: Date): Ordinal => {
   }
 };
 
-export function getNumberOfDays(date: Date) {
-  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return days[date.getMonth()]!;
+export function getNumberOfDays(dateOrMonth: Date | number) {
+  const daysLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  const idx =
+    typeof dateOrMonth === "number" ? dateOrMonth : dateOrMonth.getMonth();
+
+  return daysLength[idx]!;
 }
 
 export function getDated(date: Date) {
