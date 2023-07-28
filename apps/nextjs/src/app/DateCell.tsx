@@ -23,12 +23,17 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
 
   const colors = useRandomColors(3);
 
+  const isSaturday = dated.date % 7 === 1;
+  const isSunday = dated.date % 7 === 2;
+
   return (
     <div
       className={cn(
         "group relative flex h-32 w-44 cursor-pointer border border-white border-opacity-30 bg-slate-900 bg-opacity-30 p-0 text-slate-50 text-opacity-70",
         isToday &&
           "border-2 border-blue-300 border-opacity-100 font-bold text-opacity-100",
+        isSaturday && "bg-cyan-700",
+        isSunday && "bg-green-600",
       )}
     >
       <div
