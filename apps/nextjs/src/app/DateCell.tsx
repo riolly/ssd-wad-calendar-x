@@ -1,28 +1,29 @@
 import { PlusIcon } from "lucide-react";
 
 import { cn } from "~/lib/utils";
-import { useSchedules } from "../utils/store";
-import type { Dated, PrevNextDate, Schedule } from "../utils/store";
+import { useCalendarStore, useScheduleStore } from "../utils/store";
+import type { Dated, PrevNextDate } from "../utils/store";
 
 interface Props extends Dated {
   isToday: boolean;
   isSelected: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedDate: () => void;
 }
 export default function DayCell({
   isToday,
   isSelected,
   setOpen,
-  setSelectedDate,
   ...dated
 }: Props) {
+  const setSelectedDate = useCalendarStore((state) => state.setSelectedDate);
   function handleClick() {
-    setSelectedDate();
+    setSelectedDate(dated.id);
     setOpen(true);
   }
 
-  const [schedules, dispatch] = useSchedules();
+  const schedules = useScheduleStore((state) =>
+    state.getScheduleByDate(dated.id),
+  );
 
   return (
     <button
@@ -39,10 +40,12 @@ export default function DayCell({
       {schedules.map((s) => (
         <div key={s.id}>
           <p>{s.name}</p>
-          <time>{s.time}</time>
+          <time>
+            {s.time.hour}:{s.time.minute} {s.time.format}
+          </time>
           <span>
-            {s.invitations?.map((email, i) => (
-              <span key={`${i}-${email}`}>{email}</span>
+            {s.invitations?.map((inv, i) => (
+              <span key={`${i}-${inv.address}`}>{inv.address}</span>
             ))}
           </span>
         </div>

@@ -27,6 +27,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { HOUR_FORMAT, HOURS, MINUTES } from "~/lib/date";
+import { useScheduleStore } from "../utils/store";
 import type { Dated } from "../utils/store";
 import { TimeSelect } from "./TimeSelect";
 
@@ -94,11 +95,11 @@ export function CreateScheduleDialog({
     }
   }
 
-  function submitHandler(values: z.infer<typeof formSchema>) {
-    console.log(values, "<<< values");
+  function submitHandler({ invite, ...input }: z.infer<typeof formSchema>) {
+    console.log(input, "<<<<<< values");
   }
   function submitErrorHandler(error: FieldErrors<z.infer<typeof formSchema>>) {
-    console.log(error, "<<<<<<< error");
+    console.log(error, "<<<<<<< errors");
   }
 
   return (
