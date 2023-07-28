@@ -62,6 +62,7 @@ export function CreateScheduleDialog({
 
   const form = useForm<z.infer<typeof formSchema>>({
     mode: "onBlur",
+    shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
