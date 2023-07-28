@@ -1,5 +1,7 @@
 import { generateId } from "@acme/db/utils";
 
+import type { Schedule } from "~/utils/store";
+
 export const HOURS = [
   "00",
   "01",
@@ -56,6 +58,10 @@ export const MONTHS = [
   "November",
   "December",
 ];
+
+export function getTimeDisplay(time: Schedule["time"]) {
+  return `${time.hour}:${time.minute} ${time.format}`;
+}
 
 export function getMonthString(date: Date) {
   // fix: zod validation for number <12
