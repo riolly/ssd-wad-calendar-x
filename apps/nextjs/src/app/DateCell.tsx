@@ -1,38 +1,35 @@
 import { PlusIcon } from "lucide-react";
 
-import { getDateOrdinal } from "~/lib/date";
 import { cn } from "~/lib/utils";
+import type { Dated } from "../utils/store";
 
-export interface DayProps {
-  day: number;
+interface Props extends Dated {
   isToday: boolean;
-  selectedDay: number | null;
-}
-interface Props extends DayProps {
+  isSelected: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedDay: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedDate: () => void;
 }
 export default function DayCell({
-  day,
   isToday,
-  selectedDay,
+  isSelected,
   setOpen,
-  setSelectedDay,
+  setSelectedDate,
+  ...dated
 }: Props) {
-  const outsideDay = day === 0;
+  // const outsideDay = day.day === 0;
+
+  // if (outsideDay) {
+  //   return (
+  //     <div
+  //       className="h-32 w-44 border border-white border-opacity-30 bg-gray-500 bg-opacity-30"
+  //       data-outside={outsideDay}
+  //     />
+  //   );
+  // }
 
   function handleClick() {
-    setSelectedDay(day);
+    setSelectedDate();
     setOpen(true);
-  }
-
-  if (outsideDay) {
-    return (
-      <div
-        className="h-32 w-44 border border-white border-opacity-30 bg-gray-500 bg-opacity-30"
-        data-outside={outsideDay}
-      />
-    );
   }
 
   return (
@@ -44,18 +41,18 @@ export default function DayCell({
           "border-2 border-blue-300 border-opacity-100 font-bold text-opacity-100",
       )}
     >
-      {!outsideDay && day}
+      {dated.date}
       <div
         className="absolute -left-0.5 -top-0.5 box-content flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity hover:opacity-100 group-focus:opacity-100 data-[selected=true]:bg-blue-500 data-[selected=true]:opacity-100"
-        data-selected={selectedDay === day}
+        data-selected={isSelected}
       >
         <span className="flex">
-          <span className="text-5xl">{day}</span>
-          <span>{getDateOrdinal(day)}</span>
+          <span className="text-5xl">{dated.date}</span>
+          <span>{dated.dateOrdinal}</span>
         </span>
         <span className="flex gap-1">
           <PlusIcon />
-          <span>Add event</span>
+          <span>Add schedule</span>
         </span>
       </div>
     </button>

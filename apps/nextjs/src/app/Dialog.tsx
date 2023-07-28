@@ -11,17 +11,15 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { getDateOrdinal, getDayString } from "~/lib/date";
+import type { Dated } from "../utils/store";
 
-export function CreateEventDialog({
+export function CreateScheduleDialog({
   open,
   setOpen,
   selectedDate,
-  selectedDay,
 }: {
   open: boolean;
-  selectedDay: number | null;
-  selectedDate: Date | null;
+  selectedDate: Dated | null;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
@@ -30,14 +28,14 @@ export function CreateEventDialog({
         <DialogHeader>
           <DialogTitle className="font-normal">
             Add schedule for
-            {selectedDate && selectedDay && (
+            {selectedDate && (
               <span className="text-blue-200">
                 &nbsp;
-                {getDayString(selectedDate)}
-                ,&nbsp;{selectedDay}
-                <sup className="text-sm">{getDateOrdinal(selectedDay)}</sup>
+                {selectedDate.dayStr}
+                ,&nbsp;{selectedDate.date}
+                <sup className="text-sm">{selectedDate.dateOrdinal}</sup>
                 &nbsp;
-                {selectedDate.getFullYear()}
+                {selectedDate.year}
               </span>
             )}
           </DialogTitle>

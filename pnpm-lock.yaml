@@ -200,6 +200,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.0.0
+      immer:
+        specifier: ^10.0.2
+        version: 10.0.2
       lucide-react:
         specifier: ^0.263.1
         version: 0.263.1(react@18.2.0)
@@ -221,6 +224,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.6
         version: 1.0.6(tailwindcss@3.3.2)
+      use-immer:
+        specifier: ^0.9.0
+        version: 0.9.0(immer@10.0.2)(react@18.2.0)
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -323,6 +329,9 @@ importers:
       eslint:
         specifier: ^8.45.0
         version: 8.45.0
+      eslint-plugin-immer-reducer:
+        specifier: ^0.1.1
+        version: 0.1.1
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
@@ -5922,6 +5931,10 @@ packages:
       - supports-color
     dev: false
 
+  /eslint-plugin-immer-reducer@0.1.1:
+    resolution: {integrity: sha512-q/xyxnAIiVpA9xC+00QMNTt/uIkF96xjfmjo6htGuJBZcK/t031v9NkcsGzU+we89U0jzs6ZceSTwFUqxdqeQg==}
+    dev: true
+
   /eslint-plugin-import@2.27.5(@typescript-eslint/parser@6.2.0)(eslint@8.45.0):
     resolution: {integrity: sha512-LmEt3GVofgiGuiE+ORpnvP+kAm3h6MLZJ4Q5HCyHADofsb4VzXFsRiWj3c0OFiV+3DWFh0qg3v9gcPlfc3zRow==}
     engines: {node: '>=4'}
@@ -7144,6 +7157,10 @@ packages:
     hasBin: true
     dependencies:
       queue: 6.0.2
+
+  /immer@10.0.2:
+    resolution: {integrity: sha512-Rx3CqeqQ19sxUtYV9CU911Vhy8/721wRFnJv3REVGWUmoAcIwzifTsdmJte/MV+0/XpM35LZdQMBGkRIoLPwQA==}
+    dev: false
 
   /import-fresh@2.0.0:
     resolution: {integrity: sha512-eZ5H8rcgYazHbKC3PG4ClHNykCSxtAhxSSEM+2mb+7evD2CKF5V7c0dNum7AdpDh0ZdICwZY9sRSn8f+KH96sg==}
@@ -11247,6 +11264,16 @@ packages:
       '@types/react': 18.2.16
       react: 18.2.0
       tslib: 2.6.0
+    dev: false
+
+  /use-immer@0.9.0(immer@10.0.2)(react@18.2.0):
+    resolution: {integrity: sha512-/L+enLi0nvuZ6j4WlyK0US9/ECUtV5v9RUbtxnn5+WbtaXYUaOBoKHDNL9I5AETdurQ4rIFIj/s+Z5X80ATyKw==}
+    peerDependencies:
+      immer: '>=2.0.0'
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      immer: 10.0.2
+      react: 18.2.0
     dev: false
 
   /use-latest-callback@0.1.6(react@18.2.0):
