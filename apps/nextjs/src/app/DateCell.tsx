@@ -7,18 +7,18 @@ import type { Dated, PrevNextDate } from "../utils/store";
 
 interface Props extends Dated {
   isToday: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function DayCell({ isToday, setOpen, ...dated }: Props) {
+export default function DayCell({ isToday, ...dated }: Props) {
   const setSelectedDate = useCalendarStore((state) => state.setSelectedDate);
   const schedules = useScheduleStore((state) =>
     state.getScheduleByDate(dated.id),
   );
   const removeSchedule = useScheduleStore((state) => state.removeSchedule);
+  const setIsModalOpen = useCalendarStore((state) => state.setIsModalOpen);
 
   function createScheduleModal() {
     setSelectedDate(dated.id);
-    setOpen(true);
+    setIsModalOpen(true);
   }
 
   const colors = useRandomColors(3);

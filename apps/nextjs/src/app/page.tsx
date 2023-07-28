@@ -17,8 +17,6 @@ export default function HomePage() {
 
   const dateds = useDatedStore((state) => state.dateds);
 
-  const [open, setOpen] = React.useState(false);
-
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-950 to-slate-900 text-white">
       <div className="container flex flex-col items-center py-12">
@@ -38,14 +36,13 @@ export default function HomePage() {
               key={dated.id}
               {...dated}
               isToday={toDated.date === dated.date}
-              setOpen={setOpen}
             />
           ))}
           {nextDates.map((date) => (
             <PrevNextDateCell key={date.id} {...date} />
           ))}
         </div>
-        <CreateScheduleDialog open={open} setOpen={setOpen} />
+        <CreateScheduleDialog />
       </div>
     </main>
   );

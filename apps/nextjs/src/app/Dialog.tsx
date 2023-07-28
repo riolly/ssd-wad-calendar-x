@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import type { FieldErrors } from "react-hook-form";
@@ -31,13 +30,10 @@ import { getTimeDisplay, HOUR_FORMAT, HOURS, MINUTES } from "~/lib/date";
 import { useCalendarStore, useScheduleStore } from "../utils/store";
 import { TimeSelect } from "./TimeSelect";
 
-export function CreateScheduleDialog({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}) {
+export function CreateScheduleDialog() {
+  const isModalOpen = useCalendarStore((state) => state.isModalOpen);
+  const setIsModalOpen = useCalendarStore((state) => state.setIsModalOpen);
+
   const { toast } = useToast();
   const formSchema = z.object({
     name: z.string().min(3, {
@@ -100,13 +96,13 @@ export function CreateScheduleDialog({
   function submitHandler({ invite: _, ...input }: z.infer<typeof formSchema>) {
     if (selectedDate) {
       addSchedule({ ...input, dateId: selectedDate.id });
-      setOpen(false);
+      setIsModalOpen(false);
       toast({
         title: "Added to your schedule:",
         description: `${input.name} at ${getTimeDisplay(input.time)}`,
       });
     } else {
-      setOpen(false);
+      setIsModalOpen(false);
       toast({
         title: "Failed adding schedule:",
         description: `${input.name} at ${getTimeDisplay(input.time)}`,
@@ -120,7 +116,7 @@ export function CreateScheduleDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogContent className="max-w-screen-sm">
         <DialogHeader>
           <DialogTitle className="font-normal">

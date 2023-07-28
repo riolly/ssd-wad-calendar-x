@@ -84,14 +84,21 @@ export const useDatedStore = create<DatedStore>()(
 
 // --- CALENDAR ---
 interface CalendarStore {
+  isModalOpen: boolean;
   selectedDate: Dated | null;
+  setIsModalOpen: (isOpen: boolean) => void;
   setSelectedDate: (id: string) => void;
 }
 
 export const useCalendarStore = create<CalendarStore>()(
   persist(
     immer((set) => ({
+      isModalOpen: false,
       selectedDate: null,
+      setIsModalOpen: (isOpen) =>
+        set((state) => {
+          state.isModalOpen = isOpen;
+        }),
       setSelectedDate: (id) =>
         set((state) => {
           const dateds = useDatedStore.getState().dateds;
