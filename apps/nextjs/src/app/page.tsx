@@ -22,7 +22,7 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-950 to-slate-900 text-white">
       <div className="container flex flex-col items-center py-12">
-        <h1 className="mb-8 text-4xl font-semibold">
+        <h1 className="-mt-2 mb-8 text-4xl font-semibold">
           {toDated.monthStr} {toDated.year}
         </h1>
 
