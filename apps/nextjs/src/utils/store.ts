@@ -84,21 +84,23 @@ export const useDatedStore = create<DatedStore>()(
 
 // --- CALENDAR ---
 interface CalendarStore {
-  isModalOpen: boolean;
   selectedDate: Dated | null;
-  setIsModalOpen: (isOpen: boolean) => void;
+  selectedSchedule: Schedule | null;
+  isCreateScheduleOpen: boolean;
+  isEditScheduleOpen: boolean;
   setSelectedDate: (id: string) => void;
+  setSelectedSchedule: (id: string) => void;
+  setIsCreateScheduleOpen: (isOpen: boolean) => void;
+  setIsEditScheduleOpen: (isOpen: boolean) => void;
 }
 
 export const useCalendarStore = create<CalendarStore>()(
   persist(
     immer((set) => ({
-      isModalOpen: false,
       selectedDate: null,
-      setIsModalOpen: (isOpen) =>
-        set((state) => {
-          state.isModalOpen = isOpen;
-        }),
+      selectedSchedule: null,
+      isCreateScheduleOpen: false,
+      isEditScheduleOpen: false,
       setSelectedDate: (id) =>
         set((state) => {
           const dateds = useDatedStore.getState().dateds;
@@ -106,6 +108,22 @@ export const useCalendarStore = create<CalendarStore>()(
           if (selection) {
             state.selectedDate = selection;
           }
+        }),
+      setSelectedSchedule: (id) =>
+        set((state) => {
+          const schedules = useScheduleStore.getState().schedules;
+          const selection = schedules.find((d) => d.id === id);
+          if (selection) {
+            state.selectedSchedule = selection;
+          }
+        }),
+      setIsCreateScheduleOpen: (isOpen) =>
+        set((state) => {
+          state.isCreateScheduleOpen = isOpen;
+        }),
+      setIsEditScheduleOpen: (isOpen) =>
+        set((state) => {
+          state.isEditScheduleOpen = isOpen;
         }),
     })),
     { name: "sketchdule-calendar" },
@@ -129,6 +147,7 @@ export interface Schedule {
 interface ScheduleStore {
   schedules: Schedule[];
   addSchedule: (scheduleNew: Omit<Schedule, "id">) => void;
+  editSchedule: (scheduleNew: Schedule) => void;
   removeSchedule: (id: string) => void;
   getScheduleByDate: (id: string) => Schedule[];
 }
@@ -140,6 +159,13 @@ export const useScheduleStore = create<ScheduleStore>()(
       addSchedule: (scheduleNew) =>
         set((state) => {
           state.schedules.push({ ...scheduleNew, id: generateId() });
+        }),
+      editSchedule: (edited) =>
+        set((state) => {
+          const idx = state.schedules.findIndex((s) => s.id === edited.id);
+          if (idx !== -1) {
+            state.schedules[idx] = edited;
+          }
         }),
       removeSchedule: (id) =>
         set((state) => {

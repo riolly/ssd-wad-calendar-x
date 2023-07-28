@@ -5,7 +5,8 @@ import React from "react";
 import { DAYS, getDated } from "~/lib/date";
 import { useDatedStore } from "../utils/store";
 import DateCell, { PrevNextDateCell } from "./DateCell";
-import { CreateScheduleDialog } from "./Dialog";
+import ScheduleCreateDialog from "./ScheduleCreate";
+import ScheduleEditDialog from "./ScheduleEdit";
 
 export default function HomePage() {
   // toDate mean today
@@ -42,7 +43,8 @@ export default function HomePage() {
             <PrevNextDateCell key={date.id} {...date} />
           ))}
         </div>
-        <CreateScheduleDialog />
+        <ScheduleCreateDialog />
+        <ScheduleEditDialog />
       </div>
     </main>
   );

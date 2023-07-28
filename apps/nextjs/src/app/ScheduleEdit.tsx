@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import type { FieldErrors } from "react-hook-form";
@@ -9,7 +10,6 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -30,12 +30,15 @@ import { getTimeDisplay, HOUR_FORMAT, HOURS, MINUTES } from "~/lib/date";
 import { useCalendarStore, useScheduleStore } from "../utils/store";
 import { TimeSelect } from "./TimeSelect";
 
-export function CreateScheduleDialog() {
-  const isModalOpen = useCalendarStore((state) => state.isModalOpen);
-  const setIsModalOpen = useCalendarStore((state) => state.setIsModalOpen);
+export default function ScheduleEditDialog() {
+  const scheduleDefault = useCalendarStore((state) => state.selectedSchedule)!;
+  const isOpen = useCalendarStore((state) => state.isEditScheduleOpen);
+  const setIsOpen = useCalendarStore((state) => state.setIsEditScheduleOpen);
 
   const { toast } = useToast();
   const formSchema = z.object({
+    id: z.string(),
+    dateId: z.string(),
     name: z.string().min(3, {
       message: "Name must be at least 3 characters.",
     }),
@@ -61,13 +64,7 @@ export function CreateScheduleDialog() {
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      time: {
-        hour: undefined,
-        minute: undefined,
-        format: "AM",
-      },
-      invitations: [],
+      ...scheduleDefault,
       invite: "",
     },
   });
@@ -89,58 +86,54 @@ export function CreateScheduleDialog() {
       form.setFocus("invite");
     }
   }
+  function handleRemoveSchedule() {
+    removeSchedule(scheduleDefault.id);
+    setIsOpen(false);
+    toast({
+      title: "Schedule removed:",
+      description: `${scheduleDefault.name} at ${getTimeDisplay(
+        scheduleDefault.time,
+      )}`,
+    });
+  }
 
-  const selectedDate = useCalendarStore((s) => s.selectedDate);
-  const addSchedule = useScheduleStore((state) => state.addSchedule);
+  const editSchedule = useScheduleStore((state) => state.editSchedule);
+  const removeSchedule = useScheduleStore((state) => state.removeSchedule);
 
   function submitHandler({ invite: _, ...input }: z.infer<typeof formSchema>) {
-    if (selectedDate) {
-      addSchedule({ ...input, dateId: selectedDate.id });
-      setIsModalOpen(false);
-      toast({
-        title: "Added to your schedule:",
-        description: `${input.name} at ${getTimeDisplay(input.time)}`,
-      });
-    } else {
-      setIsModalOpen(false);
-      toast({
-        title: "Failed adding schedule:",
-        description: `${input.name} at ${getTimeDisplay(input.time)}`,
-        variant: "destructive",
-      });
-    }
+    editSchedule(input);
+    setIsOpen(false);
+    toast({
+      title: "Schedule updated.",
+      description: `${input.name} at ${getTimeDisplay(input.time)}`,
+    });
   }
 
   function submitErrorHandler(error: FieldErrors<z.infer<typeof formSchema>>) {
     console.log(error, "<<<<<<< errors");
   }
 
+  useEffect(() => {
+    form.setValue("id", scheduleDefault.id);
+    form.setValue("dateId", scheduleDefault.dateId);
+    form.setValue("name", scheduleDefault.name);
+    form.setValue("time", scheduleDefault.time);
+    form.setValue("invitations", scheduleDefault.invitations);
+  }, [form, scheduleDefault]);
+
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="max-w-screen-sm">
         <DialogHeader>
-          <DialogTitle className="font-normal">
-            Add schedule for
-            {selectedDate && (
-              <span className="text-blue-200">
-                &nbsp;
-                {selectedDate.dayStr}
-                ,&nbsp;{selectedDate.date}
-                <sup className="text-sm">{selectedDate.dateOrdinal}</sup>
-                &nbsp;
-                {selectedDate.year}
-              </span>
-            )}
-          </DialogTitle>
-          <DialogDescription>
-            You can also invite peoples on your schedule
-          </DialogDescription>
+          <DialogTitle className="font-normal">Change schedule</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submitHandler, submitErrorHandler)}
             className="mt-4 space-y-2"
           >
+            <input {...form.register("id")} type="hidden" />
+            <input {...form.register("dateId")} type="hidden" />
             <FormField
               control={form.control}
               name="name"
@@ -256,8 +249,15 @@ export function CreateScheduleDialog() {
               )}
             />
 
-            <DialogFooter className="flex">
-              <Button type="submit">Make schedule</Button>
+            <DialogFooter className="pt-4">
+              <Button type="submit">Update</Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleRemoveSchedule}
+              >
+                Delete
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -265,3 +265,11 @@ export function CreateScheduleDialog() {
     </Dialog>
   );
 }
+
+// function RemoveSuccess({ name }: { name: string }) {
+//   return (
+//     <span>
+//       <span className="italic">{name}</span> has been removed
+//     </span>
+//   );
+// }

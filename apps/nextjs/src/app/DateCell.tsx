@@ -9,16 +9,28 @@ interface Props extends Dated {
   isToday: boolean;
 }
 export default function DayCell({ isToday, ...dated }: Props) {
-  const setSelectedDate = useCalendarStore((state) => state.setSelectedDate);
   const schedules = useScheduleStore((state) =>
     state.getScheduleByDate(dated.id),
   );
-  const removeSchedule = useScheduleStore((state) => state.removeSchedule);
-  const setIsModalOpen = useCalendarStore((state) => state.setIsModalOpen);
+  const setSelectedDate = useCalendarStore((state) => state.setSelectedDate);
+  const setSelectedSchedule = useCalendarStore(
+    (state) => state.setSelectedSchedule,
+  );
+  const setIsCreateScheduleOpen = useCalendarStore(
+    (state) => state.setIsCreateScheduleOpen,
+  );
+  const setIsEditScheduleOpen = useCalendarStore(
+    (state) => state.setIsEditScheduleOpen,
+  );
 
   function createScheduleModal() {
     setSelectedDate(dated.id);
-    setIsModalOpen(true);
+    setIsCreateScheduleOpen(true);
+  }
+
+  function editScheduleModal(id: string) {
+    setSelectedSchedule(id);
+    setIsEditScheduleOpen(true);
   }
 
   const colors = useRandomColors(3);
@@ -50,7 +62,7 @@ export default function DayCell({ isToday, ...dated }: Props) {
             key={s.id}
             onClick={(e) => {
               e.stopPropagation();
-              removeSchedule(s.id);
+              editScheduleModal(s.id);
             }}
             className={cn(
               "group z-10 flex w-full flex-col items-start rounded bg-green-700 bg-opacity-70 px-2 py-0.5 transition-all hover:scale-110 hover:bg-opacity-100",
@@ -67,7 +79,7 @@ export default function DayCell({ isToday, ...dated }: Props) {
               {s.invitations && (
                 <div className="flex gap-1">
                   {s.invitations.length === 1 && <User size={14} />}
-                  {s.invitations.length === 2 && <Users size={14} />}
+                  {s.invitations.length >= 2 && <Users size={14} />}
                   {s.invitations.length >= 3 && (
                     <span className="text-xs">{s.invitations.length}</span>
                   )}
