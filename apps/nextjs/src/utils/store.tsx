@@ -127,10 +127,56 @@ export function useDateds() {
 
 // --- SCHEDULE ---
 
-// export interface ScheduleEntity {
-//   id: string;
-//   name: string;
-//   time: string;
-//   dayId: string;
-//   invitations?: string[];
-// }
+export interface Schedule {
+  id: string;
+  name: string;
+  time: string;
+  invitations?: string[];
+  dateId: string;
+}
+
+type ScheduleReducer = Immutable<Schedule>[];
+type ScheduleAction =
+  | {
+      type: "add";
+      input: Schedule;
+    }
+  | {
+      type: "edit";
+      input: Partial<Schedule>;
+    }
+  | {
+      type: "remove";
+      id: string;
+    };
+
+function scheduleReducer(
+  schedule: Draft<ScheduleReducer>,
+  action: ScheduleAction,
+) {
+  switch (action.type) {
+    case "add":
+      schedule.push(action.input);
+      break;
+
+    case "remove": {
+      const itemIdx = schedule.findIndex((s) => s.id === action.id);
+      if (itemIdx >= 0) {
+        schedule.splice(itemIdx, 1);
+      }
+
+      break;
+    }
+
+    default:
+      break;
+  }
+}
+
+export function useSchedules() {
+  const [schedules, dispatch] = useImmerReducer<
+    ScheduleReducer,
+    ScheduleAction
+  >(scheduleReducer, []);
+  return [schedules, dispatch] as const;
+}

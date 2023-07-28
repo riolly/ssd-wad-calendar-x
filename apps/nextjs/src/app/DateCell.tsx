@@ -1,7 +1,8 @@
 import { PlusIcon } from "lucide-react";
 
 import { cn } from "~/lib/utils";
-import type { Dated, PrevNextDate } from "../utils/store";
+import { useSchedules } from "../utils/store";
+import type { Dated, PrevNextDate, Schedule } from "../utils/store";
 
 interface Props extends Dated {
   isToday: boolean;
@@ -21,6 +22,8 @@ export default function DayCell({
     setOpen(true);
   }
 
+  const [schedules, dispatch] = useSchedules();
+
   return (
     <button
       onClick={handleClick}
@@ -33,6 +36,17 @@ export default function DayCell({
       <span className={cn(isToday && "underline underline-offset-4")}>
         {dated.date}
       </span>
+      {schedules.map((s) => (
+        <div key={s.id}>
+          <p>{s.name}</p>
+          <time>{s.time}</time>
+          <span>
+            {s.invitations?.map((email, i) => (
+              <span key={`${i}-${email}`}>{email}</span>
+            ))}
+          </span>
+        </div>
+      ))}
       <div
         className="absolute -left-0.5 -top-0.5 box-content flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity hover:opacity-100 group-focus:opacity-100 data-[selected=true]:bg-blue-500 data-[selected=true]:opacity-100"
         data-selected={isSelected}
