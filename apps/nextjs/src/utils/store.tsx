@@ -1,13 +1,19 @@
 import type { Draft, Immutable } from "immer";
 import { useImmerReducer } from "use-immer";
 
+import { generateId } from "@acme/db/utils";
+
 import type { Ordinal } from "~/lib/date";
-import { getDated, getNumberOfDays } from "~/lib/date";
+import { getDated, getDateOrdinal, getNumberOfDays } from "~/lib/date";
 
 // --- CALENDAR ---
 
+export type PrevNextDate = Pick<Dated, "id" | "date" | "dateOrdinal">;
+
 interface Calendar {
   selectedDate: Dated | null;
+  prevDates: PrevNextDate[];
+  nextDates: PrevNextDate[];
 }
 type CalendarReducer = Immutable<Calendar>;
 interface CalendarAction {
@@ -24,18 +30,46 @@ function calendarReducer(
       calendar.selectedDate = action.dated;
       break;
     }
-    // TODO: set todayDateId on mount
 
     default:
       break;
   }
 }
 
-export function useCalendar() {
-  const [calendar, dispatch] = useImmerReducer<CalendarReducer, CalendarAction>(
-    calendarReducer,
-    { selectedDate: null },
+function initCalendarReducer(toDated: Dated): Calendar {
+  const firstDate = new Date(toDated.dateObj.setDate(1));
+  const prevFillDaysLenght = firstDate.getDay(); // as gap before the first day
+  const prevMonthDaysLenght = getNumberOfDays(
+    toDated.month === 1 ? 12 : toDated.month - 1,
   );
+  const prevDates = Array.from({ length: prevFillDaysLenght }, (_, i) => {
+    const date = prevMonthDaysLenght - (prevFillDaysLenght - (i + 1));
+    return {
+      id: generateId(),
+      date: date,
+      dateOrdinal: getDateOrdinal(date),
+    };
+  }) as PrevNextDate[];
+
+  const incompleteLength = prevFillDaysLenght + getNumberOfDays(toDated.month);
+  const nextMonthDaysLenght =
+    Math.ceil(incompleteLength / 7) * 7 - incompleteLength;
+  const nextDates = Array.from({ length: nextMonthDaysLenght }, (_, i) => {
+    return {
+      id: generateId(),
+      date: i + 1,
+      dateOrdinal: getDateOrdinal(i + 1),
+    };
+  }) as PrevNextDate[];
+  return { selectedDate: null, prevDates, nextDates };
+}
+
+export function useCalendar(toDated: Dated) {
+  const [calendar, dispatch] = useImmerReducer<
+    CalendarReducer,
+    CalendarAction,
+    Dated
+  >(calendarReducer, toDated, initCalendarReducer);
   return [calendar, dispatch] as const;
 }
 
@@ -99,27 +133,4 @@ export function useDateds() {
 //   time: string;
 //   dayId: string;
 //   invitations?: string[];
-// }
-
-// function initCalender(date: Date) {
-//   const firstDate = new Date(date.setDate(1));
-
-//   const genDayDef = () => ({
-//     id: generateId,
-//     day: 0,
-//     isToday: false,
-//   });
-
-//   const calLength = getNumberOfDays(date)!;
-
-//   const daysPrev = Array(firstDate.getDay()).fill(genDayDef()) as Day[];
-
-//   let daysAftr: Day[] = [];
-//   const incompleteLength = daysPrev.length + daysCurr.length;
-//   if (incompleteLength % 7 !== 0) {
-//     const t = Math.ceil(incompleteLength / 7);
-//     daysAftr = Array(t * 7 - incompleteLength).fill(genDayDef()) as Day[];
-//   }
-
-//   return [...daysPrev, ...daysCurr, ...daysAftr];
 // }

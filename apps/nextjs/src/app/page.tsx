@@ -4,7 +4,7 @@ import React from "react";
 
 import { DAYS, getDated } from "~/lib/date";
 import { useCalendar, useDateds } from "../utils/store";
-import DateCell from "./DateCell";
+import DateCell, { PrevNextDateCell } from "./DateCell";
 import { CreateScheduleDialog } from "./Dialog";
 
 export default function HomePage() {
@@ -13,8 +13,8 @@ export default function HomePage() {
   const toDated = getDated(toDate);
 
   const [dateds] = useDateds();
-  const [calendar, dispatch] = useCalendar();
-  const { selectedDate } = calendar;
+  const [calendar, dispatch] = useCalendar(toDated);
+  const { selectedDate, prevDates, nextDates } = calendar;
 
   const [open, setOpen] = React.useState(false);
 
@@ -29,6 +29,9 @@ export default function HomePage() {
           {DAYS.map((day) => (
             <DayHeading key={day} day={day} />
           ))}
+          {prevDates.map((date) => (
+            <PrevNextDateCell key={date.id} {...date} />
+          ))}
           {dateds.map((dated) => (
             <DateCell
               key={dated.id}
@@ -38,6 +41,9 @@ export default function HomePage() {
               setOpen={setOpen}
               setSelectedDate={() => dispatch({ type: "selectDate", dated })}
             />
+          ))}
+          {nextDates.map((date) => (
+            <PrevNextDateCell key={date.id} {...date} />
           ))}
         </div>
         <CreateScheduleDialog

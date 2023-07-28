@@ -1,7 +1,7 @@
 import { PlusIcon } from "lucide-react";
 
 import { cn } from "~/lib/utils";
-import type { Dated } from "../utils/store";
+import type { Dated, PrevNextDate } from "../utils/store";
 
 interface Props extends Dated {
   isToday: boolean;
@@ -16,17 +16,6 @@ export default function DayCell({
   setSelectedDate,
   ...dated
 }: Props) {
-  // const outsideDay = day.day === 0;
-
-  // if (outsideDay) {
-  //   return (
-  //     <div
-  //       className="h-32 w-44 border border-white border-opacity-30 bg-gray-500 bg-opacity-30"
-  //       data-outside={outsideDay}
-  //     />
-  //   );
-  // }
-
   function handleClick() {
     setSelectedDate();
     setOpen(true);
@@ -42,7 +31,7 @@ export default function DayCell({
       )}
     >
       <span className={cn(isToday && "underline underline-offset-4")}>
-      {dated.date}
+        {dated.date}
       </span>
       <div
         className="absolute -left-0.5 -top-0.5 box-content flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity hover:opacity-100 group-focus:opacity-100 data-[selected=true]:bg-blue-500 data-[selected=true]:opacity-100"
@@ -58,5 +47,13 @@ export default function DayCell({
         </span>
       </div>
     </button>
+  );
+}
+
+export function PrevNextDateCell(date: PrevNextDate) {
+  return (
+    <div className="h-32 w-44 border border-white border-opacity-30 bg-gray-500 bg-opacity-30 p-2 text-gray-500">
+      {date.date}
+    </div>
   );
 }
