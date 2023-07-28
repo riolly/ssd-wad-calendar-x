@@ -33,7 +33,7 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
     >
       <div
         className={cn(
-          "absolute right-2 top-1 z-20 origin-top-right text-slate-200 text-opacity-70 transition-transform group-hover:scale-150 group-hover:text-opacity-100",
+          "pointer-events-none absolute right-2 top-1 z-20 origin-top-right text-slate-200 text-opacity-70 transition-transform group-hover:scale-150 group-hover:text-opacity-100",
           isToday && "underline underline-offset-4",
         )}
       >
@@ -74,7 +74,7 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
         {schedules.length < 3 && (
           <button
             onClick={createScheduleModal}
-            className="flex w-full grow flex-col items-center justify-center gap-3 rounded-lg border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity focus:opacity-100 group-hover:opacity-100"
+            className="flex w-full grow flex-col items-center justify-center gap-3 rounded-lg border-2 border-blue-100 border-opacity-0 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity hover:border-opacity-100 focus:opacity-100 group-hover:opacity-100"
           >
             {/* <span className="flex">
               <span className="text-[200%]">{dated.date}</span>
