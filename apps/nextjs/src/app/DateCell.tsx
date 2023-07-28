@@ -1,5 +1,6 @@
 import { PlusIcon, User, Users } from "lucide-react";
 
+import { useRandomColors } from "~/lib/style";
 import { cn } from "~/lib/utils";
 import { useCalendarStore, useScheduleStore } from "../utils/store";
 import type { Dated, PrevNextDate } from "../utils/store";
@@ -20,6 +21,8 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
     setOpen(true);
   }
 
+  const colors = useRandomColors(3);
+
   return (
     <div
       className={cn(
@@ -30,23 +33,26 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
     >
       <div
         className={cn(
-          "absolute right-2 top-1 z-10 origin-top-right text-slate-200 text-opacity-70 transition-transform group-hover:scale-150 group-hover:text-opacity-100",
+          "absolute right-2 top-1 z-20 origin-top-right text-slate-200 text-opacity-70 transition-transform group-hover:scale-150 group-hover:text-opacity-100",
           isToday && "underline underline-offset-4",
         )}
       >
         {dated.date}
       </div>
-      <div className="flex w-full flex-col">
-        {schedules.map((s) => (
+      <div className="flex w-full flex-col gap-0.5 p-0.5">
+        {schedules.map((s, i) => (
           <button
             key={s.id}
             onClick={(e) => {
               e.stopPropagation();
               removeSchedule(s.id);
             }}
-            className="group flex w-full flex-col items-start rounded border px-2 py-[0.1rem]"
+            className={cn(
+              "group z-10 flex w-full flex-col items-start rounded bg-green-700 bg-opacity-70 px-2 py-0.5 transition-all hover:scale-110 hover:bg-opacity-100",
+              colors[i]?.name,
+            )}
           >
-            <p className="text-op line-clamp-1 text-left text-sm text-white">
+            <p className="text-op line-clamp-1 text-left text-sm leading-[1.15rem] text-white ">
               {s.name}
             </p>
             <div className="flex w-full justify-between">
@@ -68,7 +74,7 @@ export default function DayCell({ isToday, setOpen, ...dated }: Props) {
         {schedules.length < 3 && (
           <button
             onClick={createScheduleModal}
-            className="flex w-full grow flex-col items-center justify-center gap-3 rounded-xl border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity focus:opacity-100 group-hover:opacity-100"
+            className="flex w-full grow flex-col items-center justify-center gap-3 rounded-lg border-2 border-blue-100 bg-gray-500/20 text-white opacity-0 backdrop-blur transition-opacity focus:opacity-100 group-hover:opacity-100"
           >
             {/* <span className="flex">
               <span className="text-[200%]">{dated.date}</span>
