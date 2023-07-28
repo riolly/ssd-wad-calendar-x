@@ -1,9 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { FieldError, FieldErrors } from "react-hook-form";
-import { useForm } from "react-hook-form";
+import { X } from "lucide-react";
+import type { FieldErrors } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -16,7 +18,7 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -46,6 +48,16 @@ export function CreateScheduleDialog({
       minute: z.string({ required_error: "Minute must be set." }),
       format: z.string(),
     }),
+    invitations: z
+      .object({
+        address: z.string().email("Email address is invalid."),
+      })
+      .array()
+      .optional(),
+    invite: z.union([
+      z.string().email("Email address is invalid."),
+      z.string().refine((v) => v === ""),
+    ]),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,20 +68,36 @@ export function CreateScheduleDialog({
       time: {
         hour: undefined,
         minute: undefined,
-        format: "PM",
+        format: "AM",
       },
+      invitations: [],
+      invite: "",
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "invitations",
   });
 
   const {
     formState: { errors },
   } = form;
 
+  async function handleAddInvitation() {
+    const valid = await form.trigger("invite");
+    if (valid) {
+      append({ address: form.getValues("invite")! });
+      form.setValue("invite", "");
+      form.setFocus("invite");
+    }
+  }
+
   function submitHandler(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    console.log(values, "<<< values");
   }
   function submitErrorHandler(error: FieldErrors<z.infer<typeof formSchema>>) {
-    console.log(error);
+    console.log(error, "<<<<<<< error");
   }
 
   return (
@@ -96,7 +124,7 @@ export function CreateScheduleDialog({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(submitHandler, submitErrorHandler)}
-            className="mt-4 space-y-4"
+            className="mt-4 space-y-2"
           >
             <FormField
               control={form.control}
@@ -123,7 +151,7 @@ export function CreateScheduleDialog({
             <div className="grid grid-cols-12 gap-4">
               <Label
                 htmlFor="time"
-                className="col-span-2 mt-4 justify-self-end"
+                className="col-span-2 mt-5 justify-self-end"
               >
                 Time
               </Label>
@@ -158,16 +186,60 @@ export function CreateScheduleDialog({
                   )}
                 </p>
               </div>
-
-              {/* <Input id="time" className="col-span-5" /> */}
             </div>
 
-            <div className="grid grid-cols-12 items-center gap-4">
-              <Label htmlFor="invititation" className="col-span-2 text-right">
-                Invititation
-              </Label>
-              <Input id="invititation" className="col-span-6" />
-            </div>
+            <FormField
+              control={form.control}
+              name="invite"
+              render={({ field }) => (
+                <FormItem className="grid grid-cols-12 gap-4">
+                  <FormLabel className="col-span-2 mt-2 justify-self-end text-right leading-5 text-white">
+                    Invite peoples
+                  </FormLabel>
+                  <div className="col-span-10 flex flex-col">
+                    <div className="flex">
+                      <FormControl>
+                        <Input
+                          placeholder="john.doe@gmail.com"
+                          className="rounded-r-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <Button
+                        className="col-span-2 rounded-l-none"
+                        variant="outline"
+                        type="button"
+                        disabled={!!form.formState.errors.invite}
+                        onClick={handleAddInvitation}
+                      >
+                        add
+                      </Button>
+                    </div>
+
+                    {/* <FormDescription>Send via email</FormDescription> */}
+                    <FormMessage />
+                    <div className="mt-0.5 space-x-1">
+                      {fields.map((inv, i) => (
+                        <Badge
+                          variant="secondary"
+                          className="pr-0"
+                          key={inv.id}
+                        >
+                          {inv.address}
+                          <button
+                            onClick={() => remove(i)}
+                            type="button"
+                            className="transition-opacity-opaci mx-0.5 rounded-full bg-gray-400 bg-opacity-0 p-0.5 hover:bg-opacity-75"
+                          >
+                            <X size={14} className="text-red-500" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </FormItem>
+              )}
+            />
 
             <DialogFooter className="flex">
               <Button type="submit">Make schedule</Button>
