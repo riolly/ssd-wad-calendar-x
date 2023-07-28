@@ -75,6 +75,7 @@ export default function ScheduleCreateDialog() {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "invitations",
+    shouldUnregister: true,
   });
 
   const {
@@ -96,6 +97,7 @@ export default function ScheduleCreateDialog() {
   function submitHandler({ invite: _, ...input }: z.infer<typeof formSchema>) {
     if (selectedDate) {
       addSchedule({ ...input, dateId: selectedDate.id });
+      form.setValue("invitations", []);
       setIsOpen(false);
       toast({
         title: "Added to your schedule:",
