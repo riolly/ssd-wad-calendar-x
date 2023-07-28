@@ -26,20 +26,19 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { HOUR_FORMAT, HOURS, MINUTES } from "~/lib/date";
-import { useScheduleStore } from "../utils/store";
-import type { Dated } from "../utils/store";
+import { useToast } from "~/components/ui/use-toast";
+import { getTimeDisplay, HOUR_FORMAT, HOURS, MINUTES } from "~/lib/date";
+import { useCalendarStore, useScheduleStore } from "../utils/store";
 import { TimeSelect } from "./TimeSelect";
 
 export function CreateScheduleDialog({
   open,
   setOpen,
-  selectedDate,
 }: {
   open: boolean;
-  selectedDate: Dated | null;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { toast } = useToast();
   const formSchema = z.object({
     name: z.string().min(3, {
       message: "Name must be at least 3 characters.",
@@ -95,9 +94,27 @@ export function CreateScheduleDialog({
     }
   }
 
-  function submitHandler({ invite, ...input }: z.infer<typeof formSchema>) {
-    console.log(input, "<<<<<< values");
+  const selectedDate = useCalendarStore((s) => s.selectedDate);
+  const addSchedule = useScheduleStore((state) => state.addSchedule);
+
+  function submitHandler({ invite: _, ...input }: z.infer<typeof formSchema>) {
+    if (selectedDate) {
+      addSchedule({ ...input, dateId: selectedDate.id });
+      setOpen(false);
+      toast({
+        title: "Added to your schedule:",
+        description: `${input.name} at ${getTimeDisplay(input.time)}`,
+      });
+    } else {
+      setOpen(false);
+      toast({
+        title: "Failed adding schedule:",
+        description: `${input.name} at ${getTimeDisplay(input.time)}`,
+        variant: "destructive",
+      });
+    }
   }
+
   function submitErrorHandler(error: FieldErrors<z.infer<typeof formSchema>>) {
     console.log(error, "<<<<<<< errors");
   }
