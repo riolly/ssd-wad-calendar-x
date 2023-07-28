@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import { generateId } from "@acme/db/utils";
@@ -69,14 +70,16 @@ interface DatedStore {
 }
 
 export const useDatedStore = create<DatedStore>()(
-  immer(() => {
-    const toDate = new Date();
-    const toDated = getDated(toDate);
-    return {
-      dateds: initDateds(new Date()),
-      ...initPrevNextDated(toDated),
-    };
-  }),
+  persist(
+    immer(() => {
+      const toDate = new Date();
+      return {
+        dateds: initDateds(toDate),
+        ...initPrevNextDated(getDated(toDate)),
+      };
+    }),
+    { name: "skechdule-dated" },
+  ),
 );
 
 // --- CALENDAR ---
@@ -86,17 +89,20 @@ interface CalendarStore {
 }
 
 export const useCalendarStore = create<CalendarStore>()(
-  immer((set) => ({
-    selectedDate: null,
-    setSelectedDate: (id) =>
-      set((state) => {
-        const dateds = useDatedStore.getState().dateds;
-        const selection = dateds.find((d) => d.id === id);
-        if (selection) {
-          state.selectedDate = selection;
-        }
-      }),
-  })),
+  persist(
+    immer((set) => ({
+      selectedDate: null,
+      setSelectedDate: (id) =>
+        set((state) => {
+          const dateds = useDatedStore.getState().dateds;
+          const selection = dateds.find((d) => d.id === id);
+          if (selection) {
+            state.selectedDate = selection;
+          }
+        }),
+    })),
+    { name: "sketchdule-calendar" },
+  ),
 );
 
 // --- SCHEDULE ---
@@ -121,19 +127,24 @@ interface ScheduleStore {
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
-  immer((set, get) => ({
-    schedules: [],
-    addSchedule: (scheduleNew) =>
-      set((state) => {
-        state.schedules.push({ ...scheduleNew, id: generateId() });
-      }),
-    removeSchedule: (id) =>
-      set((state) => {
-        const idx = state.schedules.findIndex((s) => s.id === id);
-        if (idx) {
-          state.schedules.splice(idx, 1);
-        }
-      }),
-    getScheduleByDate: (id) => get().schedules.filter((s) => s.dateId === id),
-  })),
+  persist(
+    immer((set, get) => ({
+      schedules: [],
+      addSchedule: (scheduleNew) =>
+        set((state) => {
+          state.schedules.push({ ...scheduleNew, id: generateId() });
+        }),
+      removeSchedule: (id) =>
+        set((state) => {
+          const idx = state.schedules.findIndex((s) => s.id === id);
+          if (idx !== -1) {
+            state.schedules.splice(idx, 1);
+          }
+        }),
+      getScheduleByDate: (id) => get().schedules.filter((s) => s.dateId === id),
+    })),
+    {
+      name: "skechdule-schedule",
+    },
+  ),
 );
