@@ -43,7 +43,7 @@ export function useCalendar() {
 
 export interface Dated {
   id: string;
-  dayObj: Date;
+  dateObj: Date;
   date: number;
   dayStr: string;
   dateOrdinal: Ordinal;

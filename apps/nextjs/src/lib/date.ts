@@ -61,7 +61,7 @@ export function getNumberOfDays(dateOrMonth: Date | number) {
 export function getDated(date: Date) {
   return {
     id: generateId(),
-    dayObj: date,
+    dateObj: date,
     date: date.getDate(),
     dateOrdinal: getDateOrdinal(date),
     dayStr: getDayString(date),
