@@ -3,7 +3,7 @@
 import React from "react";
 
 import { DAYS, getDated } from "~/lib/date";
-import { useCalendarStore, useDatedStore } from "../utils/store";
+import { useDatedStore } from "../utils/store";
 import DateCell, { PrevNextDateCell } from "./DateCell";
 import { CreateScheduleDialog } from "./Dialog";
 
@@ -15,7 +15,6 @@ export default function HomePage() {
   const prevDates = useDatedStore((state) => state.prevDates);
   const nextDates = useDatedStore((state) => state.nextDates);
 
-  const selectedDate = useCalendarStore((state) => state.selectedDate);
   const dateds = useDatedStore((state) => state.dateds);
 
   const [open, setOpen] = React.useState(false);
@@ -39,20 +38,14 @@ export default function HomePage() {
               key={dated.id}
               {...dated}
               isToday={toDated.date === dated.date}
-              isSelected={selectedDate?.date === dated.date}
               setOpen={setOpen}
-              // setSelectedDate={() => dispatch({ type: "selectDate", dated })}
             />
           ))}
           {nextDates.map((date) => (
             <PrevNextDateCell key={date.id} {...date} />
           ))}
         </div>
-        <CreateScheduleDialog
-          open={open}
-          setOpen={setOpen}
-          selectedDate={selectedDate}
-        />
+        <CreateScheduleDialog open={open} setOpen={setOpen} />
       </div>
     </main>
   );
