@@ -7,7 +7,7 @@ export default function SignInPage() {
         appearance={{
           layout: {
             logoImageUrl:
-              "https://raw.githubusercontent.com/t3-oss/create-t3-app/99286f37324330ecdf75132fae1f246440a88035/www/public/images/t3-light.svg",
+              "https://raw.githubusercontent.com/riolly/web-dev-universe/master/public/riolly-dark.svg",
             socialButtonsPlacement: "top",
           },
         }}

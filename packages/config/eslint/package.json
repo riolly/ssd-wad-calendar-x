@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "eslint": "^8.45.0",
+    "eslint-plugin-immer-reducer": "^0.1.1",
     "typescript": "^5.1.6"
   }
 }

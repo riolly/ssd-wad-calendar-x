@@ -1,52 +1,59 @@
-import { Suspense } from "react";
-import Link from "next/link";
-import { currentUser, SignOutButton } from "@clerk/nextjs";
+"use client";
 
-import { CreatePostForm, PostList } from "./posts";
+import React from "react";
+
+import { DAYS, getDated } from "~/lib/date";
+import { useDatedStore } from "../utils/store";
+import DateCell, { PrevNextDateCell } from "./DateCell";
+import ScheduleCreateDialog from "./ScheduleCreate";
+import ScheduleEditDialog from "./ScheduleEdit";
 
 export default function HomePage() {
-  return (
-    <main className="flex h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container mt-12 flex flex-col items-center justify-center gap-4 px-4 py-8">
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          Create <span className="text-pink-400">T3</span> Turbo
-        </h1>
-        <AuthShowcase />
+  // toDate mean today
+  const toDate = new Date();
+  const toDated = getDated(toDate);
 
-        <CreatePostForm />
-        <Suspense fallback={<span>Loading...</span>}>
-          <PostList />
-        </Suspense>
+  const prevDates = useDatedStore((state) => state.prevDates);
+  const nextDates = useDatedStore((state) => state.nextDates);
+
+  const dateds = useDatedStore((state) => state.dateds);
+
+  return (
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-blue-950 to-slate-900 text-white">
+      <div className="container flex flex-col items-center py-12">
+        <h1 className="-mt-2 mb-8 text-4xl font-semibold">
+          {toDated.monthStr} {toDated.year}
+        </h1>
+
+        <div className="grid grid-cols-7 overflow-clip rounded-t-xl">
+          {DAYS.map((day) => (
+            <DayHeading key={day} day={day} />
+          ))}
+          {prevDates.map((date) => (
+            <PrevNextDateCell key={date.id} {...date} />
+          ))}
+          {dateds.map((dated) => (
+            <DateCell
+              key={dated.id}
+              {...dated}
+              isToday={toDated.date === dated.date}
+            />
+          ))}
+          {nextDates.map((date) => (
+            <PrevNextDateCell key={date.id} {...date} />
+          ))}
+        </div>
+        <ScheduleCreateDialog />
+        <ScheduleEditDialog />
       </div>
     </main>
   );
 }
 
-async function AuthShowcase() {
-  const user = await currentUser();
-
-  if (!user) {
-    return (
-      <Link
-        href="/sign-in"
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-      >
-        Sign in
-      </Link>
-    );
-  }
-
+function DayHeading(props: { day: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl text-white">
-        <span>Logged in as {user.firstName}</span>
-      </p>
-
-      <SignOutButton>
-        <button className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
-          Sign out
-        </button>
-      </SignOutButton>
+    <div className="flex justify-center bg-blue-100/75 py-2 text-lg font-semibold text-slate-800">
+      {props.day}
     </div>
   );
 }
