@@ -114,11 +114,13 @@ export default function ScheduleEditDialog() {
   }
 
   useEffect(() => {
-    form.setValue("id", scheduleDefault.id);
-    form.setValue("dateId", scheduleDefault.dateId);
-    form.setValue("name", scheduleDefault.name);
-    form.setValue("time", scheduleDefault.time);
-    form.setValue("invitations", scheduleDefault.invitations);
+    if (scheduleDefault) {
+      form.setValue("id", scheduleDefault.id);
+      form.setValue("dateId", scheduleDefault.dateId);
+      form.setValue("name", scheduleDefault.name);
+      form.setValue("time", scheduleDefault.time);
+      form.setValue("invitations", scheduleDefault.invitations);
+    }
   }, [form, scheduleDefault]);
 
   return (
