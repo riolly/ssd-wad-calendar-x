@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import { generateId } from "@acme/db/utils";
@@ -70,16 +69,13 @@ interface DatedStore {
 }
 
 export const useDatedStore = create<DatedStore>()(
-  persist(
-    immer(() => {
-      const toDate = new Date();
-      return {
-        dateds: initDateds(toDate),
-        ...initPrevNextDated(getDated(toDate)),
-      };
-    }),
-    { name: "skechdule-dated" },
-  ),
+  immer(() => {
+    const toDate = new Date();
+    return {
+      dateds: initDateds(toDate),
+      ...initPrevNextDated(getDated(toDate)),
+    };
+  }),
 );
 
 // --- CALENDAR ---
@@ -95,39 +91,36 @@ interface CalendarStore {
 }
 
 export const useCalendarStore = create<CalendarStore>()(
-  persist(
-    immer((set) => ({
-      selectedDate: null,
-      selectedSchedule: null,
-      isCreateScheduleOpen: false,
-      isEditScheduleOpen: false,
-      setSelectedDate: (id) =>
-        set((state) => {
-          const dateds = useDatedStore.getState().dateds;
-          const selection = dateds.find((d) => d.id === id);
-          if (selection) {
-            state.selectedDate = selection;
-          }
-        }),
-      setSelectedSchedule: (id) =>
-        set((state) => {
-          const schedules = useScheduleStore.getState().schedules;
-          const selection = schedules.find((d) => d.id === id);
-          if (selection) {
-            state.selectedSchedule = selection;
-          }
-        }),
-      setIsCreateScheduleOpen: (isOpen) =>
-        set((state) => {
-          state.isCreateScheduleOpen = isOpen;
-        }),
-      setIsEditScheduleOpen: (isOpen) =>
-        set((state) => {
-          state.isEditScheduleOpen = isOpen;
-        }),
-    })),
-    { name: "sketchdule-calendar" },
-  ),
+  immer((set) => ({
+    selectedDate: null,
+    selectedSchedule: null,
+    isCreateScheduleOpen: false,
+    isEditScheduleOpen: false,
+    setSelectedDate: (id) =>
+      set((state) => {
+        const dateds = useDatedStore.getState().dateds;
+        const selection = dateds.find((d) => d.id === id);
+        if (selection) {
+          state.selectedDate = selection;
+        }
+      }),
+    setSelectedSchedule: (id) =>
+      set((state) => {
+        const schedules = useScheduleStore.getState().schedules;
+        const selection = schedules.find((d) => d.id === id);
+        if (selection) {
+          state.selectedSchedule = selection;
+        }
+      }),
+    setIsCreateScheduleOpen: (isOpen) =>
+      set((state) => {
+        state.isCreateScheduleOpen = isOpen;
+      }),
+    setIsEditScheduleOpen: (isOpen) =>
+      set((state) => {
+        state.isEditScheduleOpen = isOpen;
+      }),
+  })),
 );
 
 // --- SCHEDULE ---
@@ -153,31 +146,26 @@ interface ScheduleStore {
 }
 
 export const useScheduleStore = create<ScheduleStore>()(
-  persist(
-    immer((set, get) => ({
-      schedules: [],
-      addSchedule: (scheduleNew) =>
-        set((state) => {
-          state.schedules.push({ ...scheduleNew, id: generateId() });
-        }),
-      editSchedule: (edited) =>
-        set((state) => {
-          const idx = state.schedules.findIndex((s) => s.id === edited.id);
-          if (idx !== -1) {
-            state.schedules[idx] = edited;
-          }
-        }),
-      removeSchedule: (id) =>
-        set((state) => {
-          const idx = state.schedules.findIndex((s) => s.id === id);
-          if (idx !== -1) {
-            state.schedules.splice(idx, 1);
-          }
-        }),
-      getScheduleByDate: (id) => get().schedules.filter((s) => s.dateId === id),
-    })),
-    {
-      name: "skechdule-schedule",
-    },
-  ),
+  immer((set, get) => ({
+    schedules: [],
+    addSchedule: (scheduleNew) =>
+      set((state) => {
+        state.schedules.push({ ...scheduleNew, id: generateId() });
+      }),
+    editSchedule: (edited) =>
+      set((state) => {
+        const idx = state.schedules.findIndex((s) => s.id === edited.id);
+        if (idx !== -1) {
+          state.schedules[idx] = edited;
+        }
+      }),
+    removeSchedule: (id) =>
+      set((state) => {
+        const idx = state.schedules.findIndex((s) => s.id === id);
+        if (idx !== -1) {
+          state.schedules.splice(idx, 1);
+        }
+      }),
+    getScheduleByDate: (id) => get().schedules.filter((s) => s.dateId === id),
+  })),
 );
